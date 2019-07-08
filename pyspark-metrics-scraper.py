@@ -1,7 +1,15 @@
 import requests as re
+import json
+from influxdb import InfluxDBClient
+from influxdb import SeriesHelper
+import argparse
+# for 
+import pprint
 
 r = re.get('http://localhost:4040/api/v1/applications')
 appJSON = r.json()
+
+pprint = pprint.PrettyPrinter(indent=4)
 
 # collect application IDs into a list to be iterated over later
 # because they need to be fed to other API request URLs
@@ -16,7 +24,7 @@ jobsJSONlist = []
 for jobURL in appJobsURLs:
     req = re.get(jobURL)
     jobsJSONlist.append(req.json())
-print(f"Jobs data: {jobsJSONlist}") # if any
+#print(f"Jobs data: {jobsJSONlist}") # if any
 
 
 # also collect job IDs for details on certain jobs
@@ -31,8 +39,7 @@ try:
     # collect JSON from each given job by the job's respective URL
     for url in appJobIDURLS:
         req = re.get(url)
-        print(req.json)
-
+        print(req.json())
 
 except NameError:
     print("NameError occured likely because no job IDs to print")
@@ -41,31 +48,55 @@ except IndexError:
 
 # collect list of executor api urls by each appID
 appExecutorURLs = ['http://localhost:4040/api/v1/applications/'+appIDs[i]+'/executors' for i,id in enumerate(appIDs)]
-print(appExecutorURLs)
+#print(appExecutorURLs)
 
 # loop through and send requests to every url in list of executor urls
 executorJSONlist = []
 for executorURL in appExecutorURLs:
     req = re.get(executorURL)
     executorJSONlist.append(req.json())
-print(f"Executors data: {executorJSONlist}") # if any
+#print(f"Executors data: {executorJSONlist}") # if any
+
 
 # also collect executor IDs for details on certain executors
 try:
     executorIDs = [exec[i]['id'] for i,exec in enumerate(executorJSONlist)]
-    print(f"Executor IDs: {executorIDs}")
+    #print(f"Executor IDs: {executorIDs}")
     # collect list of executor ID api urls by each appID-executorID
     appExecutorIDURLs = [appExecutorURLs[i] + '/' + executorIDs[i] + '/threads' for i,id in enumerate(appExecutorURLs)]
-    print(f"App executor URLs: {appExecutorIDURLs}")
+    #print(f"App executor URLs: {appExecutorIDURLs}")
 
     # collect JSON from each given executor by the executor's respective URL
     for url in appExecutorIDURLs:
         req = re.get(url)
-        print(req.json)
+        #pprint.pprint(req.json())
+        # json.dumps(req)
+        # print(req.json())
 
 except NameError:
     print("NameError occured likely because no executor IDs to print")
 except IndexError:
     print("IndexError occured likely because executor list is empty")
+
+    parser = argparse.ArgumentParser()
+
+    myclient = InfluxDBClient(database="client_testing")
+
+    class ExecutorSeriesHelper(SeriesHelper):
+        class Meta:
+            client = myclient
+            series_name = 'pyspark_executors'
+            fields = ['threadState','blockedByLock']
+            tags = ['threadID','threadName']
+            bulk_size = 5
+            autocommit = True
+
+    for thread in req.json():
+        ExecutorSeriesHelper(threadID=thread['threadId'], 
+                            threadState=thread['threadState'],
+                            threadName=thread['threadName'],
+                            blockedByLock=thread['blockedByLock'])
+finally:
+    print("Executor data successfully written")
 
 

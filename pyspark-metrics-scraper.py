@@ -80,7 +80,7 @@ except IndexError:
 
     parser = argparse.ArgumentParser()
 
-    myclient = InfluxDBClient(database="client_testing")
+    myclient = InfluxDBClient(database="test1")
 
     class ExecutorSeriesHelper(SeriesHelper):
         class Meta:

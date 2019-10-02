@@ -1,0 +1,21 @@
+#!/usr/local/bin/python3
+
+import os
+import sys
+import pysnooper
+# script should take an entire command as an argument and pipe it to 'python -mjson.tool'
+
+cmd = sys.argv[1]
+# try:
+
+# except:
+#     print("Prettify only takes one argument.  Perhaps you need to wrap command in quotes")
+
+@pysnooper.snoop()
+def prettify(cmd):
+    fullCommand = f"{cmd} | python -mjson.tool"
+    print(fullCommand)
+    return os.system(fullCommand)
+
+
+prettify(cmd)

@@ -5,6 +5,7 @@ import random
 import pysnooper
 from time import sleep
 import time
+import logging
 
 # bucket = "sam+20191104's Bucket"
 # org = "sam+20191104@influxdata.com"
@@ -34,14 +35,16 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 
 for i in range(0,100):
     points = []
-    local = time.localtime()
+    #local = time.localtime()
     for x in range(0,5):
         points.append(Point("biz_intel").tag("region", random.choice(regions)) \
                             .tag("app",random.choice(apps)) \
                             # .tag("host",host) \
                             .field("user_sessions", random.choice(user_sessions)) \
                             .field("num_transactions",random.choice(num_xactions)) \
-                            .time(int(time.mktime(local))))
+                            .time(time.time_ns()))
+        #print(local)
+
         write_api.write(bucket=bucket, org=org, record=points)
         # print(points[0].time())
         sleep(5)

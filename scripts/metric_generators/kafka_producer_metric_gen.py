@@ -1,0 +1,1 @@
+import confluent-kafka-python

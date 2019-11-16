@@ -39,15 +39,9 @@ for i in range(0,100):
                             .time(time.time_ns()))
         #print(local)
 
-        write_api.write(bucket=bucket, org=org, record=points)
+    write_api.write(bucket=bucket, org=org, record=points)
         # print(points[0].time())
-        sleep(5)
+    sleep(5)
 
 #p_alt = f"biz_intel,region={random.choice(regions)},app={random.choice(apps)},host={host} user_sessions={random.choice(user_sessions)},num_transactions={random.choice(num_xactions)} "
 
-
-point = Point("biz_intel").tag("region", random.choice(regions)) \
-                            .tag("app",random.choice(apps)) \
-                            .tag("host",host) \
-                            .field("user_sessions", random.choice(user_sessions)) \
-                            .field("num_transactions",random.choice(num_xactions)) \

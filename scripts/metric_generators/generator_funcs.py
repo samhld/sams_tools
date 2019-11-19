@@ -6,9 +6,9 @@ import time
 import os
 import pysnooper
 
-bucket = "default"
-org = "influxdata"
-token = os.environ['INFLUX_TOKEN']
+# bucket = "default"
+# org = "influxdata"
+# token = os.environ['INFLUX_TOKEN']
 
 regions = ['us-west-1','us-west2','us-east-1','us-east-2','ap-southeast-2','eu-west-1']
 apps = ['checkout','shoes','payment','frontend',]
@@ -31,7 +31,7 @@ url = "http://localhost:9999"
 client = InfluxDBClient(url=url, token=token, org=org, debug=True)
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-def influx_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_intel', write_once=False): 
+def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_intel'): 
 
     if use_case == 'biz_intel':
         # write biz_intel metrics

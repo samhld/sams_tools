@@ -6,9 +6,9 @@ import time
 import os
 import pysnooper
 
-# bucket = "default"
-# org = "influxdata"
-# token = os.environ['INFLUX_TOKEN']
+bucket = "default"
+org = "influxdata"
+token = os.environ['INFLUX_TOKEN']
 
 regions = ['us-west-1','us-west2','us-east-1','us-east-2','ap-southeast-2','eu-west-1']
 apps = ['checkout','shoes','payment','frontend',]
@@ -44,13 +44,16 @@ def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_int
             points = []
             #local = time.localtime()
             for x in range(0,batch_size):
-                points.append(Point("biz_intel").tag("region", random.choice(regions)) \
-                                    .tag("app",random.choice(apps)) \
-                                    .field("user_sessions", random.choice(user_sessions)) \
-                                    .field("num_transactions",random.choice(num_xactions)) \
-                                    .time(time.time_ns()))
-            write_api.write(bucket=bucket, org=org, record=points)
+                points.append(f"biz_intel,region={random.choice(regions)},app={random.choice(apps)} user_sessions={random.choice(user_sessions)}i,num_transactions={random.choice(num_xactions)}i {time.time_ns()}")
+                # points.append(Point("biz_intel").tag("region", random.choice(regions)) \
+                #                     .tag("app",random.choice(apps)) \
+                #                     .field("user_sessions", random.choice(user_sessions)) \
+                #                     .field("num_transactions",random.choice(num_xactions)) \
+                #                     .time(time.time_ns()))
+            #write_api.write(bucket=bucket, org=org, record=points)
             sleep(interval)
+            return(points)
+            
 
 
     elif use_case == 'devops':
@@ -59,6 +62,7 @@ def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_int
         host_suffixes = range(0,5)
         host = random.choice(host_prefixes) + str(random.choice(host_suffixes))
     
+    '''Have to add udp vs http, use_case vs use_case functionality for each gen function'''
 
 
 
@@ -77,8 +81,9 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
                 # Graphite doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
+            print(f"Points from func: {points}")
             write_api.write(bucket=bucket, org=org, record=points)
-            print(points)
+            return(points)
             sleep(interval)
 
     elif use_case == 'devops':
@@ -93,5 +98,6 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
             write_api.write(bucket=bucket, org=org, record=points)
-            print(points)
+            print(f"Points from fun: {points}")
             sleep(interval)
+

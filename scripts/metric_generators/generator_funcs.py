@@ -125,7 +125,6 @@ def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_int
         for i in range(0,num_batches):
             points = []
             for x in range(0,batch_size):
-                #api_http_requests_total{method="POST", handler="/messages"}
                 points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
                 points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
             sleep(interval)

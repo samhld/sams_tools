@@ -52,7 +52,7 @@ def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_int
                 #                     .time(time.time_ns()))
             #write_api.write(bucket=bucket, org=org, record=points)
             sleep(interval)
-            return(points)
+        return(points)
 
     elif use_case == 'devops':
         # write devops metrics
@@ -79,10 +79,8 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
                 # Graphite doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
-            print(f"Points from func: {points}")
-            write_api.write(bucket=bucket, org=org, record=points)
-            return(points)
             sleep(interval)
+        return(points)
 
     elif use_case == 'devops':
         # write devops metrics
@@ -95,9 +93,8 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
             for x in range(0,batch_size):
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
                 points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
-            write_api.write(bucket=bucket, org=org, record=points)
-            print(f"Points from fun: {points}")
             sleep(interval)
+        return(points)
 
 
 def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_intel'):
@@ -115,9 +112,9 @@ def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_int
             points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
             points.append(f"num_xactions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
         print(f"Points from func: {points}")
-        write_api.write(bucket=bucket, org=org, record=points)
-        return(points)
         sleep(interval)
+    return(points)
+
 
     elif use_case == 'devops':
         # write devops metrics
@@ -129,9 +126,7 @@ def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_int
             points = []
             for x in range(0,batch_size):
                 #api_http_requests_total{method="POST", handler="/messages"}
-                points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-                points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-                
-            write_api.write(bucket=bucket, org=org, record=points)
-            print(f"Points from fun: {points}")
+                points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
+                points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
             sleep(interval)
+        return(points)

@@ -1,11 +1,13 @@
 from generator_funcs import *
 import argparse
-import pysnooper
+import socket
+
 
 bucket = "default"
 org = "influxdata"
 token = os.environ['INFLUX_TOKEN']
-url = "http://localhost:9999"
+addr = "http://localhost"
+port = 9999
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--format", 
@@ -28,10 +30,14 @@ parser.add_argument("--use_case",
                                 help="Can be 'biz_intel', 'devops', ('financial','app' coming soon)--> Default='biz_intel'",
                                 type=str, 
                                 default='biz_intel')
+parser.add_argument("--protocol",
+                                help="Can be 'http' or 'udp'--> Default='http'",
+                                type=str,
+                                default='http')
 
 args = parser.parse_args()
 
-
+url = addr+':'+str(port)
 client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
@@ -41,17 +47,23 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 -It will write over HTTP or UDP (no UDP for 2.X yet)
 -It allows for determing number of batches, size of batches, and the sampling interval you want to test
 '''
-# with pysnooper.snoop():
 
 if args.format == 'influx':
     points = influx_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
 
-    # print(args.num_batches)
-    # print(args.interval)
-    # print(args.batch_size)
-    print(f"Points: {points}")
-    #print(f"Points from client: {points}")
-    write_api.write(bucket=bucket, org=org, record=points)
+    if args.protocol == 'udp':
+        addr = '127.0.0.1'
+        port = 8089
+        server = (addr,port)
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(server)
+        #s.sendto(line.encode('utf-8'), server)
+        s.send(points.encode('utf-8'))
+        #sleep(cfg.settings['interval'])
+        s.close()
+
+
+# elif args.format == 'graphite':
 
 
 '''

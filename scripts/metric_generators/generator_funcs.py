@@ -100,20 +100,20 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
 def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_intel'):
     if use_case == 'biz_intel':
 
-    apps = ['checkout','shoes','payment','frontend']
-    user_sessions = range(5,2000,45)
-    num_xactions = range(0,11)       
+        apps = ['checkout','shoes','payment','frontend']
+        user_sessions = range(5,2000,45)
+        num_xactions = range(0,11)       
 
-    for i in range(0,num_batches):
-        points = []
-        #local = time.localtime()
-        for x in range(0,batch_size):
-            # Prometheus doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
-            points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-            points.append(f"num_xactions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-        print(f"Points from func: {points}")
-        sleep(interval)
-    return(points)
+        for i in range(0,num_batches):
+            points = []
+            #local = time.localtime()
+            for x in range(0,batch_size):
+                # Prometheus doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
+                points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
+                points.append(f"num_xactions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
+            print(f"Points from func: {points}")
+            sleep(interval)
+        return(points)
 
 
     elif use_case == 'devops':

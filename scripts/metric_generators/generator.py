@@ -2,13 +2,6 @@ from generator_funcs import *
 import argparse
 import socket
 
-
-bucket = "default"
-org = "influxdata"
-token = os.environ['INFLUX_TOKEN']
-addr = "http://localhost"
-port = 9999
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--format", 
                             help="Can be 'influx', 'graphite', ('prometheus', 'json' coming soon)--> Default='influx'",
@@ -37,9 +30,14 @@ parser.add_argument("--protocol",
 
 args = parser.parse_args()
 
+bucket = "default"
+org = "influxdata"
+token = os.environ['INFLUX_TOKEN']
+addr = "http://localhost"
+port = 9999
+
 url = addr+':'+str(port)
 client = InfluxDBClient(url=url, token=token, org=org)
-write_api = client.write_api(write_options=SYNCHRONOUS)
 
 '''
 -This will generate and write metrics to either Influx1.X or Influx2.X in any of the below formats:
@@ -52,15 +50,21 @@ if args.format == 'influx':
     points = influx_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
 
     if args.protocol == 'udp':
+        #note: no udp support for 2.0 yet so, when using port 9999, don't use udp for now
         addr = '127.0.0.1'
         port = 8089
         server = (addr,port)
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(server)
         #s.sendto(line.encode('utf-8'), server)
-        s.send(points.encode('utf-8'))
+        for point in points:
+            s.send(point.encode('utf-8'))
         #sleep(cfg.settings['interval'])
         s.close()
+
+    if args.protocol == 'http':
+        write_api = client.write_api(write_options=SYNCHRONOUS)
+        write_api.write(bucket=bucket, org=org, record=points)
 
 
 # elif args.format == 'graphite':

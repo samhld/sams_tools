@@ -3,6 +3,13 @@
 ## Requires:
 * Python 3.6+
 
+## Not Yet Implemented:
+* variables.env
+* gen_config.py
+* kafka_producer_metric_gen.py
+
+(Not sure how I'm going to implement these for the best UX yet)
+
 ## How To Use:
 Clone this repository.  If/when you're in the directory `/metric_generators`, run `python3 generator.py <flags>` (flags are listed in the How To Use section)
 

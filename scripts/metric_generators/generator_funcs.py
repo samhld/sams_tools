@@ -11,9 +11,9 @@ org = "influxdata"
 token = os.environ['INFLUX_TOKEN']
 
 regions = ['us-west-1','us-west2','us-east-1','us-east-2','ap-southeast-2','eu-west-1']
-# apps = ['checkout','shoes','payment','frontend',]
-# user_sessions = range(5,2000,45)
-# num_xactions = range(0,11)
+apps = ['checkout','shoes','payment','frontend',]
+user_sessions = range(5,2000,45)
+num_xactions = range(0,11)
 
 '''
 All metric generators will take a parameters 'batch_size', 'num_batches',
@@ -50,7 +50,6 @@ def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_int
                 #                     .field("user_sessions", random.choice(user_sessions)) \
                 #                     .field("num_transactions",random.choice(num_xactions)) \
                 #                     .time(time.time_ns()))
-            #write_api.write(bucket=bucket, org=org, record=points)
             sleep(interval)
         return(points)
 
@@ -60,7 +59,6 @@ def influx_metric_gen(batch_size=5, num_batches=1, interval=5, use_case='biz_int
         host_suffixes = range(0,5)
         host = random.choice(host_prefixes) + str(random.choice(host_suffixes))
     
-    '''Have to add udp vs http, use_case vs use_case functionality for each gen function'''
 
 
 
@@ -77,8 +75,10 @@ def graphite_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz
             #local = time.localtime()
             for x in range(0,batch_size):
                 # Graphite doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
-                points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
-                points.append(f"biz_intel.{random.choice(regions)}.{random.choice(apps)}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
+                region = random.choice(regions)
+                app = random.choice(apps)
+                points.append(f"biz_intel.{region}.{app}.user_sessions value={random.choice(user_sessions)} {time.time_ns()}")
+                points.append(f"biz_intel.{region}.{app}.num_transactions value={random.choice(num_xactions)} {time.time_ns()}")
             sleep(interval)
         return(points)
 
@@ -109,9 +109,10 @@ def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_int
             #local = time.localtime()
             for x in range(0,batch_size):
                 # Prometheus doesn't support writing multiple Fields (metrics) per line, so a "batch" will consist of more than 1 line to write all Fields in the batch
-                points.append(f"user_sessions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-                points.append(f"num_xactions{{region={random.choice(regions)}, app={random.choice(apps)}}}")
-            print(f"Points from func: {points}")
+                app = random.choice(apps)
+                region = random.choice(regions)
+                points.append(f"user_sessions{{region={region},app={app}}} value={random.choice(user_sessions)} {time.time_ns()}")
+                points.append(f"num_xactions{{region={region},app={app}}} value={random.choice(num_xactions)} {time.time_ns()}")
             sleep(interval)
         return(points)
 
@@ -125,7 +126,7 @@ def prom_metric_gen(batch_size=5, num_batches=100, interval=5, use_case='biz_int
         for i in range(0,num_batches):
             points = []
             for x in range(0,batch_size):
-                points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
-                points.append(f"user_sessions{{region={random.choice(regions)}, host={host}, app={random.choice(apps)}}}")
+                points.append(f"user_sessions{{region={region}, host={host}, app={app}}}")
+                points.append(f"user_sessions{{region={region}, host={host}, app={app}}}")
             sleep(interval)
         return(points)

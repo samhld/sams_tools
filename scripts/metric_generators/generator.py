@@ -37,7 +37,7 @@ addr = "http://localhost"
 port = 9999
 
 url = addr+':'+str(port)
-client = InfluxDBClient(url=url, token=token, org=org)
+client = InfluxDBClient(url=url, token=token, org=org, debug=True)
 
 '''
 -This will generate and write metrics to either Influx1.X or Influx2.X in any of the below formats:
@@ -46,26 +46,67 @@ client = InfluxDBClient(url=url, token=token, org=org)
 -It allows for determing number of batches, size of batches, and the sampling interval you want to test
 '''
 
-if args.format == 'influx':
-    points = influx_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
+def generate():
 
-    if args.protocol == 'udp':
-        #note: no udp support for 2.0 yet so, when using port 9999, don't use udp for now
-        addr = '127.0.0.1'
-        port = 8089
-        server = (addr,port)
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(server)
-        #s.sendto(line.encode('utf-8'), server)
-        for point in points:
-            s.send(point.encode('utf-8'))
-        #sleep(cfg.settings['interval'])
-        s.close()
+    write_api = client.write_api(write_options=SYNCHRONOUS)
 
-    if args.protocol == 'http':
-        write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(bucket=bucket, org=org, record=points)
+    if args.format == 'influx':
+        points = influx_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
 
+        if args.protocol == 'udp':
+            #note: no udp support for 2.0 yet so, when using port 9999, don't use udp for now
+            addr = '127.0.0.1'
+            port = 8089
+            server = (addr,port)
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(server)
+            #s.sendto(line.encode('utf-8'), server)
+            for point in points:
+                s.send(point.encode('utf-8'))
+            #sleep(cfg.settings['interval'])
+            s.close()
+
+        if args.protocol == 'http':
+            write_api.write(bucket=bucket, org=org, record=points)
+
+    if args.format == 'graphite':
+        points = graphite_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
+
+        if args.protocol == 'udp':
+            #note: no udp support for 2.0 yet so, when using port 9999, don't use udp for now
+            addr = '127.0.0.1'
+            port = 8089
+            server = (addr,port)
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(server)
+            #s.sendto(line.encode('utf-8'), server)
+            for point in points:
+                s.send(point.encode('utf-8'))
+            #sleep(cfg.settings['interval'])
+            s.close()
+        
+        if args.protocol == 'http':
+            write_api.write(bucket=bucket, org=org, record=points)
+
+    if args.format == 'prometheus':
+        points = prom_metric_gen(batch_size=args.batch_size, num_batches=args.num_batches, interval=args.interval, use_case=args.use_case)
+
+        if args.protocol == 'udp':
+            #note: no udp support for 2.0 yet so, when using port 9999, don't use udp for now
+            addr = '127.0.0.1'
+            port = 8089
+            server = (addr,port)
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(server)
+            #s.sendto(line.encode('utf-8'), server)
+            for point in points:
+                s.send(point.encode('utf-8'))
+            #sleep(cfg.settings['interval'])
+            s.close()
+
+        if args.protocol == 'http':
+            write_api.write(bucket=bucket, org=org, record=points)
+generate()
 
 # elif args.format == 'graphite':
 

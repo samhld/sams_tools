@@ -4,6 +4,7 @@
 * Influx
 * Graphite
 * Prometheus
+
 These are called with the `--format` flag when running the program; i.e., `python3 generator.py --format graphite`
 
 ## Possible protocols:

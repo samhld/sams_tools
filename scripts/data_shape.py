@@ -1,6 +1,6 @@
-
-import statistics
+from statistics import median, mode
 import os
+from collections import Counter
 
 file = 'metrics.out'
 
@@ -35,9 +35,28 @@ total_fields = sum(fields_dict.values())
 avg_fields_per_line = total_fields / num_lines
 avg_tags_per_line = total_tags / num_lines
 
+tags_mode = mode(tags_dict.values())
+fields_mode = mode(fields_dict.values())
+
+tags_median = median(tags_dict.values())
+fields_median = median(fields_dict.values())
+
+
 print(avg_tags_per_line)
 print(avg_fields_per_line)
 
+print(f"Tags mode: {tags_mode}")
+print(f"Fields mode: {fields_mode}")
+print(f"Tags median: {tags_median}")
+print(f"Fields median: {fields_median}")
 
-'''Add mean, median, mode functionality here'''
 
+'''
+Add functions that allow for more exploration:
+- # of occurrences of a mumber of fields/tags
+- tag/field count bell-curve shape information
+
+
+
+
+# np.array(list(tags_dict.itmes()))

@@ -55,4 +55,5 @@ print(f"Fields median: {fields_median}")
 Add functions that allow for more exploration:
 - # of occurrences of a mumber of fields/tags
 - tag/field count bell-curve shape information
+- determine how many congruent measurement, tag set combinations there are that can have fields merged (this would only really help for lines with one field)
 '''

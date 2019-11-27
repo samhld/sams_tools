@@ -41,6 +41,7 @@ fields_mode = mode(fields_dict.values())
 tags_median = median(tags_dict.values())
 fields_median = median(fields_dict.values())
 
+distinct_measurements = set(measurements)
 
 print(avg_tags_per_line)
 print(avg_fields_per_line)
@@ -49,7 +50,8 @@ print(f"Tags mode: {tags_mode}")
 print(f"Fields mode: {fields_mode}")
 print(f"Tags median: {tags_median}")
 print(f"Fields median: {fields_median}")
-
+print(f"Distinct measurements: {len(distinct_measurements)}")
+print(distinct_measurements)
 
 '''
 Add functions that allow for more exploration:

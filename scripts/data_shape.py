@@ -55,8 +55,4 @@ print(f"Fields median: {fields_median}")
 Add functions that allow for more exploration:
 - # of occurrences of a mumber of fields/tags
 - tag/field count bell-curve shape information
-
-
-
-
-# np.array(list(tags_dict.itmes()))
+'''

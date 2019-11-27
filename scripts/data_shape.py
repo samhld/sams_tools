@@ -1,6 +1,10 @@
-from statistics import median, mode
+from statistics import median, mode, variance
 import os
 from collections import Counter
+import math
+import numpy as np
+import seaborn as sns
+import scipy.stats as stats
 
 file = 'metrics.out'
 
@@ -43,6 +47,13 @@ fields_median = median(fields_dict.values())
 
 distinct_measurements = set(measurements)
 
+tag_variance = variance(tags_dict.values())
+tag_stddev = math.sqrt(tag_variance)
+
+field_variance = variance(fields_dict.values())
+field_stddev = math.sqrt(field_variance)
+
+# print statements just to prove out the concept--will be moved into separate functions when I add complexity and better organization
 print(avg_tags_per_line)
 print(avg_fields_per_line)
 
@@ -51,7 +62,11 @@ print(f"Fields mode: {fields_mode}")
 print(f"Tags median: {tags_median}")
 print(f"Fields median: {fields_median}")
 print(f"Distinct measurements: {len(distinct_measurements)}")
-print(distinct_measurements)
+print(f"Tag variance: {tag_variance}")
+print(f"Tag stddev: {tag_stddev}")
+print(f"Field variance: {field_variance}")
+print(f"Field stddev: {field_stddev}")
+
 
 '''
 Add functions that allow for more exploration:

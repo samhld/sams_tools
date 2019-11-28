@@ -60,11 +60,21 @@ class Plotter:
         _max_fields = max(self._fields_dict.values())
         return _max_fields
 
-    def average_fields(self):
+    def min_tags(self):
+        # returns the tag count of the line with the fewest tags
+        _min_tags = min(self._tags_dict.values())
+        return _min_tags
+
+    def min_fields(self):
+         # returns the field count of the line with the fewest fields
+        _min_fields = min(self._fields_dict.values())
+        return _min_fields       
+
+    def mean_fields(self):
         # per line
         return self.total_fields() / self.num_lines
 
-    def average_tags(self):
+    def mean_tags(self):
         # per line
         return self.total_tags() / self.num_lines
 

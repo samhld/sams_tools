@@ -39,7 +39,7 @@ class Plotter:
                 self.fields.append(line_fields)
                 self.timestamps.append(timestamp)
         except ValueError:
-            print(line)
+            print(f"This line was disqualified due to formatting issues: {line}")
 
             # elif line.count(' ') < 2:
             #     other_lines = []

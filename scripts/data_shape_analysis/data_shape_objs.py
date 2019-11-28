@@ -74,7 +74,6 @@ class Plotter:
         return _max_field
 
     def _average(self, _list):
-
         return len(_list) / self.num_lines
 
     def get_median():

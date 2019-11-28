@@ -110,6 +110,10 @@ class Plotter:
         _mode_fields = mode(self._fields_dict.values())
         return _mode_fields
 
+    def distinct_measurements(self):
+        _distinct_measurements = len(set(self.measurements))
+        return _distinct_measurements
+
     def describe(self):
         # To do: make this return dataframe
         print(f"Average tags per line: {avg_tags_per_line}")

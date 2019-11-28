@@ -39,45 +39,50 @@ class Plotter:
                 self.fields.append(line_fields)
                 self.timestamps.append(timestamp)
         except ValueError:
-            print(f"This line was disqualified due to formatting issues: {line}")
-
-            # elif line.count(' ') < 2:
-            #     other_lines = []
-            #     other_lines.append(line)
-        #     #     print(other_lines)
-        #     else:
-        #         other_lines = []
-        #         other_lines.append(line)
-        # print(other_lines[0])
-
-            # elif line.count(' ') == 1:
-            #     # counts fields if no tags in line (1 space in line indicates no tags)
-            #     measurement = line.pop(0)
-            #     line_fields, timestamp = line.split()
-            #     line_fields = line_fields.split(',')
+            print(f"This line was disqualified due to formatting issues:\n{line}")
 
 
-    def get_total_fields(self):
+    def total_fields(self):
         _total_fields = sum(self._fields_dict.values())
         return _total_fields
 
-    def get_total_tags(self):
+    def total_tags(self):
         _total_tags = sum(self._tags_dict.values())
         return _total_tags
 
-    def get_max_tags(self):
-        _max_tag = max(self._tags_dict.values())
-        return _max_tag
+    def max_tags(self):
+        # returns the tag count of the line with the most tags
+        _max_tags = max(self._tags_dict.values())
+        return _max_tags
 
-    def get_max_fields(self):
-        _max_field = max(self._fields_dict.values())
-        return _max_field
+    def max_fields(self):
+        # returns the field count of the line with the most fields
+        _max_fields = max(self._fields_dict.values())
+        return _max_fields
 
-    def _average(self, _list):
-        return len(_list) / self.num_lines
+    def average_fields(self):
+        # per line
+        return self.total_fields() / self.num_lines
 
-    def get_median():
-        pass
+    def average_tags(self):
+        # per line
+        return self.total_tags() / self.num_lines
+
+    def median_tags(self):
+        _median_tags = median(self._tags_dict.values())
+        return _median_tags
+
+    def median_fields(self):
+        _median_fields = median(self._fields_dict.values())
+        return _median_fields
+
+    def mode_tags(self):
+        _mode_tags = mode(self._tags_dict.values())
+        return _mode_tags
+
+    def mode_fields(self):
+        _mode_fields = mode(self._fields_dict.values())
+        return _mode_fields
 
     def describe(self):
         # To do: make this return dataframe

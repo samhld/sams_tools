@@ -14,11 +14,12 @@ text = text.read()
 
 class Plotter:
     
-    def __init__(self, text):
+    def __init__(self, text, flattened=False):
         #add error handling for not being passed text (or file if I go that route)
+        self.flattened = flattened # determines whether self.tags/self.fields will be a list of lists; defaults to False so it's easier to work with a line at a time.
         self.measurements = []
-        self.tags = [[]]
-        self.fields = [[]] # in text with multiple lines, this is a list of lists
+        self.tags = []
+        self.fields = [] # in text with multiple lines, this is a list of lists
         self.timestamps = []
         self._parse(text)
         self.num_lines = sum(1 for line in open(file))
@@ -26,20 +27,35 @@ class Plotter:
         self._fields_dict = { f"Line{i+1} fields": len(elem) for i,elem in enumerate(self.fields)}
 
     def _parse(self,text):
-
-        try:
-            for line in text.splitlines():
-                # if line.count(' ') == 2:
-                line_tags, line_fields, timestamp = re.split('(?<!\\\\)\s', line)
-                line_tags = line_tags.split(',')
-                measurement = line_tags.pop(0)
-                self.measurements.append(measurement)
-                line_fields = line_fields.split(',')
-                self.tags.append(line_tags)
-                self.fields.append(line_fields)
-                self.timestamps.append(timestamp)
-        except ValueError:
-            print(f"This line was disqualified due to formatting issues:\n{line}")
+    
+        if self.flattened:
+            try:
+                for line in text.splitlines():
+                    line_tags, line_fields, timestamp = re.split('(?<!\\\\)\s', line)
+                    line_tags = line_tags.split(',')
+                    measurement = line_tags.pop(0)
+                    self.measurements.append(measurement)
+                    line_fields = line_fields.split(',')
+                    self.tags.extend(line_tags)
+                    self.fields.extend(line_fields)
+                    self.timestamps.extend(timestamp)
+            except ValueError:
+                print(f"This line was disqualified due to formatting issues:\n{line}")
+        
+        else:
+            try:
+                for line in text.splitlines():
+                    # if line.count(' ') == 2:
+                    line_tags, line_fields, timestamp = re.split('(?<!\\\\)\s', line)
+                    line_tags = line_tags.split(',')
+                    measurement = line_tags.pop(0)
+                    self.measurements.append(measurement)
+                    line_fields = line_fields.split(',')
+                    self.tags.append(line_tags)
+                    self.fields.append(line_fields)
+                    self.timestamps.append(timestamp)
+            except ValueError:
+                print(f"This line was disqualified due to formatting issues:\n{line}")
 
 
     def total_fields(self):

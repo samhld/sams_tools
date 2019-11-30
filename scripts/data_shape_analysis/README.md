@@ -30,6 +30,6 @@ In a directory you want to work in--and if you want to run in a VM--run: `pipenv
 
 ### To do:
 
-[ ] Add support for measurement, tag, field sizes (as opposed to counts) and create statistic description of that as well--add dict of this to description dict / row to Dataframe
-[ ] Cleanup bar plot
-[ ] Histogram support (needed?)
+- [ ] Add support for measurement, tag, field sizes (as opposed to counts) and create statistic description of that as well--add dict of this to description dict / row to Dataframe
+- [ ] Cleanup bar plot
+- [ ] Histogram support (needed?)

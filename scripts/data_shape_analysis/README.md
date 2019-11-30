@@ -19,6 +19,10 @@ Initialize an instance of Plotter with a block of text (*will support files late
 
 ### Terminal:
 
+Clone this repo.
+
+In a directory you want to work in--and if you want to run in a VM--run: `pipenv install --ignore-pipfile`
+
 
 
 ### Web UI (roadmap?):

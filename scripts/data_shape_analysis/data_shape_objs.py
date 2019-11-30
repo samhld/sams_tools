@@ -1,4 +1,4 @@
-from statistics import median, mode, variance
+from statistics import median, variance
 import os
 from collections import Counter
 import math
@@ -104,11 +104,11 @@ class Plotter:
         return self._median_fields
 
     def mode_tags(self):
-        self._mode_tags = mode(self._tags_dict.values())
+        self._mode_tags = Counter(self._tags_dict.values()).most_common(1)[0][0]
         return self._mode_tags
 
     def mode_fields(self):
-        self._mode_fields = mode(self._fields_dict.values())
+        self._mode_fields = Counter(self._fields_dict.values()).most_common(1)[0][0]
         return self._mode_fields
 
     def distinct_measurements(self):
@@ -162,16 +162,15 @@ class Plotter:
 
     def describe(self):
         # To do: make this return dataframe
-        print(f"Average tags per line: {avg_tags_per_line}")
-        print(f"Average fields per line: {avg_fields_per_line}")
-        print(f"Tags mode: {tags_mode}")
-        print(f"Fields mode: {fields_mode}")
-        print(f"Tags median: {tags_median}")
-        print(f"Fields median: {fields_median}")
-        print(f"Number of distinct measurements: {len(distinct_measurements)}")
-        print(f"Tag variance: {tag_variance}")
-        print(f"Tag stddev: {tag_stddev}")
-        print(f"Field variance: {field_variance}")
-        print(f"Field stddev: {field_stddev}")
-
+        print(f"Average tags per line: {self.mean_tags()}")
+        print(f"Average fields per line: {self.mean_fields()}")
+        print(f"Tags mode: {self.mode_tags()}")
+        print(f"Fields mode: {self.mode_fields()}")
+        print(f"Tags median: {self.median_tags()}")
+        print(f"Fields median: {self.median_fields()}")
+        print(f"Number of distinct measurements: {self.distinct_measurements()}")
+        print(f"Tag variance: {self.tag_variance()}")
+        print(f"Tag stddev: {self.tag_stddev()}")
+        print(f"Field variance: {self.field_variance()}")
+        print(f"Field stddev: {self.field_stddev()}")
 

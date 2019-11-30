@@ -200,19 +200,3 @@ class Plotter:
             return description
         elif t  == 'dataframe':
             return pd.DataFrame(description, np.array([description.keys()]))
-
-
-    # def describe(self):
-    #     # To do: make this return dataframe
-    #     print(f"Average tags per line: {self.mean_tags()}")
-    #     print(f"Average fields per line: {self.mean_fields()}")
-    #     print(f"Tags mode: {self.mode_tags()}")
-    #     print(f"Fields mode: {self.mode_fields()}")
-    #     print(f"Tags median: {self.median_tags()}")
-    #     print(f"Fields median: {self.median_fields()}")
-    #     print(f"Number of distinct measurements: {self.distinct_measurements()}")
-    #     print(f"Tag variance: {self.tag_variance()}")
-    #     print(f"Tag stddev: {self.tag_stddev()}")
-    #     print(f"Field variance: {self.field_variance()}")
-    #     print(f"Field stddev: {self.field_stddev()}")
-

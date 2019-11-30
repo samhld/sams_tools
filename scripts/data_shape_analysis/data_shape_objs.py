@@ -3,9 +3,10 @@ import os
 from collections import Counter
 import math
 import numpy as np
-import seaborn as sns
+import matplotlib.pyplot as plt
 import scipy.stats as stats
 import re
+
 
 file = 'metrics.out'
 
@@ -131,6 +132,33 @@ class Plotter:
         self.field_variance()
         self._field_stddev = math.sqrt(self._field_variance)
         return self._field_stddev
+
+    def tag_counts(self):
+        self._tag_counts = Counter(self._tags_dict.values())
+        return dict(self._tag_counts)
+
+    def field_counts(self):
+        self._field_counts = Counter(self._fields_dict.values())
+        return self._field_counts
+
+    def tag_bar_plot(self):
+        self.tag_counts()
+        self._counts_dict = dict(self._tag_counts)
+        plt.bar(range(len(self._counts_dict)), list(self._counts_dict.values()))
+        plt.xticks(range(len(self._counts_dict)), list(self._counts_dict.keys()))
+        plt.ylabel('Tag Counts')
+        plt.title('Count of Occurrences of Tags Per Line')
+        plt.show()
+
+    def field_bar_plot(self):
+        self.field_counts()
+        self._counts_dict = dict(self._field_counts)
+        plt.bar(range(len(self._counts_dict)), list(self._counts_dict.values()))
+        plt.xticks(range(len(self._counts_dict)), list(self._counts_dict.keys()))
+        plt.ylabel('Tag Counts')
+        plt.title('Count of Occurrences of Tags Per Line')
+        plt.show()
+        
 
     def describe(self):
         # To do: make this return dataframe

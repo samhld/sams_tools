@@ -11,6 +11,7 @@ By analyzing your data before it is written to InfluxDB, you can optimize and fu
 
 For DataFrame functionality:
 - [ ] Pandas
+- [ ] Numpy
 
 ## Usage:
 

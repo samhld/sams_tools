@@ -59,32 +59,32 @@ class Plotter:
 
 
     def total_fields(self):
-        _total_fields = sum(self._fields_dict.values())
-        return _total_fields
+        self._total_fields = sum(self._fields_dict.values())
+        return self._total_fields
 
     def total_tags(self):
-        _total_tags = sum(self._tags_dict.values())
-        return _total_tags
+        self._total_tags = sum(self._tags_dict.values())
+        return self._total_tags
 
     def max_tags(self):
         # returns the tag count of the line with the most tags
-        _max_tags = max(self._tags_dict.values())
-        return _max_tags
+        self._max_tags = max(self._tags_dict.values())
+        return self._max_tags
 
     def max_fields(self):
         # returns the field count of the line with the most fields
-        _max_fields = max(self._fields_dict.values())
-        return _max_fields
+        self._max_fields = max(self._fields_dict.values())
+        return self._max_fields
 
     def min_tags(self):
         # returns the tag count of the line with the fewest tags
-        _min_tags = min(self._tags_dict.values())
-        return _min_tags
+        self._min_tags = min(self._tags_dict.values())
+        return self._min_tags
 
     def min_fields(self):
          # returns the field count of the line with the fewest fields
-        _min_fields = min(self._fields_dict.values())
-        return _min_fields       
+        self._min_fields = min(self._fields_dict.values())
+        return self._min_fields       
 
     def mean_fields(self):
         # per line
@@ -95,24 +95,42 @@ class Plotter:
         return self.total_tags() / self.num_lines
 
     def median_tags(self):
-        _median_tags = median(self._tags_dict.values())
-        return _median_tags
+        self._median_tags = median(self._tags_dict.values())
+        return self._median_tags
 
     def median_fields(self):
-        _median_fields = median(self._fields_dict.values())
-        return _median_fields
+        self._median_fields = median(self._fields_dict.values())
+        return self._median_fields
 
     def mode_tags(self):
-        _mode_tags = mode(self._tags_dict.values())
-        return _mode_tags
+        self._mode_tags = mode(self._tags_dict.values())
+        return self._mode_tags
 
     def mode_fields(self):
-        _mode_fields = mode(self._fields_dict.values())
-        return _mode_fields
+        self._mode_fields = mode(self._fields_dict.values())
+        return self._mode_fields
 
     def distinct_measurements(self):
-        _distinct_measurements = len(set(self.measurements))
-        return _distinct_measurements
+        self._distinct_measurements = len(set(self.measurements))
+        return self._distinct_measurements
+
+    def tag_variance(self):
+        self._tag_variance = variance(self._tags_dict.values())
+        return self._tag_variance
+
+    def field_variance(self):
+        self._field_variance = variance(self._fields_dict.values())
+        return self._field_variance
+
+    def tag_stddev(self):
+        self.tag_variance()
+        self._tag_stddev = math.sqrt(self._tag_variance)
+        return self._tag_stddev
+
+    def field_stddev(self):
+        self.field_variance()
+        self._field_stddev = math.sqrt(self._field_variance)
+        return self._field_stddev
 
     def describe(self):
         # To do: make this return dataframe

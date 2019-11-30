@@ -4,6 +4,7 @@ from collections import Counter
 import math
 import matplotlib.pyplot as plt
 import re
+import numpy as np
 
 
 file = 'metrics.out'
@@ -21,7 +22,7 @@ class Plotter:
         self.fields = [] # in text with multiple lines, this is a list of lists
         self.timestamps = []
         self._parse(text)
-        self.num_lines = sum(1 for line in open(file))
+        self.num_lines = sum(1 for line in text.splitlines())
         self._tags_dict = { f"Line{i+1} tags": len(elem) for i,elem in enumerate(self.tags)}
         self._fields_dict = { f"Line{i+1} fields": len(elem) for i,elem in enumerate(self.fields)}
 

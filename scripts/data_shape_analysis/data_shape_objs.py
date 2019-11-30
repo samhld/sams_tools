@@ -103,13 +103,33 @@ class Plotter:
         self._median_fields = median(self._fields_dict.values())
         return self._median_fields
 
-    def mode_tags(self):
-        self._mode_tags = Counter(self._tags_dict.values()).most_common(1)[0][0]
-        return self._mode_tags
+    # def mode_tags(self):
+    #     self._mode_tags = Counter(self._tags_dict.values()).most_common(1)[0][0]
+    #     return self._mode_tags
 
-    def mode_fields(self):
-        self._mode_fields = Counter(self._fields_dict.values()).most_common(1)[0][0]
-        return self._mode_fields
+    # def mode_fields(self):
+    #     self._mode_fields = Counter(self._fields_dict.values()).most_common(1)[0][0]
+    #     return self._mode_fields
+
+    def mode_tags(self, value='mode'):
+        if value == 'mode':
+            # mode is the number of tags that occurred most often
+            self._mode_tags = Counter(self._tags_dict.values()).most_common(1)[0][0]
+            return self._mode_tags
+        if value == 'occurrences':
+            # number of times the mode occurred
+            self._mode_tag_occurrences = Counter(self._tags_dict.values()).most_common(1)[0][1]
+            return self._mode_tag_occurrences
+
+    def mode_fields(self, value='mode'):
+        if value == 'mode':
+            # mode is the number of tags that occurred most often
+            self._mode_fields = Counter(self._fields_dict.values()).most_common(1)[0][0]
+            return self._mode_fields
+        if value == 'occurrences':
+            # number of times the mode occurred
+            self._mode_field_occurrences = Counter(self._fields_dict.values()).most_common(1)[0][1]
+            return self._mode_field_occurrences
 
     def distinct_measurements(self):
         self._distinct_measurements = len(set(self.measurements))

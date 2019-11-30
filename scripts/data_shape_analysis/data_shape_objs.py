@@ -2,11 +2,8 @@ from statistics import median, variance
 import os
 from collections import Counter
 import math
-import numpy as np
 import matplotlib.pyplot as plt
-import scipy.stats as stats
 import re
-import pandas as pd
 
 
 file = 'metrics.out'
@@ -199,4 +196,8 @@ class Plotter:
         if  t == 'dict':
             return description
         elif t  == 'dataframe':
-            return pd.DataFrame(description, np.array([description.keys()]))
+            try:
+                import pandas as pd
+                return pd.DataFrame(description, np.array([description.keys()]))
+            except ModuleNotFoundError:
+                print("Please install pandas module to use Dataframes")

@@ -6,8 +6,11 @@ By analyzing your data before it is written to InfluxDB, you can optimize and fu
 
 ## Requires:
 
-Python 3.7+
-(will require Pandas and matplotlib/seaborn)
+- [ ] Python 3.7+
+- [ ] Matplotlib
+
+For DataFrame functionality:
+- [ ] Pandas
 
 ## Usage:
 

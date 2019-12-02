@@ -19,7 +19,7 @@ For DataFrame functionality:
 
 Import the Plotter() class: `from data_shape import Plotter`
 
-Initialize an instance of Plotter with a block of text (*will support files later*): `plotter = Plotter(text)
+Initialize an instance of Plotter with a block of text (*will support files later*): `plotter = Plotter(text)`
 
 ### Terminal:
 

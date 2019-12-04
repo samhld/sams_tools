@@ -10,7 +10,7 @@ measurements = client.get_list_measurements()
 
 m_list = [measurements[i]["name"] for i in range(0,len(measurements))]  
 
-def get_tags(m_list, response='keys'):
+def get_tags(m_list: List[str] , response='keys'):
     _tags = []
     for i in range(len(m_list)):
         query = f'''SHOW TAG KEYS FROM "{m_list[i]}"'''

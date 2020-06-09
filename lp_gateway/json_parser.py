@@ -108,20 +108,21 @@ def get_level_keys(obj, lvl):
 #   return(level_keys)
 
 def get_level_keys(obj, lvl):
+  key_list = list(obj.keys())
+  print(f"key_list: {key_list}")
   level_keys = {}
   level_keys['one_level'] = []
+  rem_keys = []
 
   for key in key_list:
     if type(orig[key]) in [int,bool,str,float]: 
-      level_keys['one_level'].append(key) 
-      key_list.remove(key)
-
-    elif type(orig[key]) == dict: 
-      level_key_name = f"{lvl}_level" 
-      level_keys[level_key_name] = []
-
-      for key in key_list: 
-        level_keys[level_key_name].append(key) 
-        rem_keys = key_list.remove(key)
-
+      level_keys['one_level'].append(key)
+    else:
+      print(f"adding to rem_keys: {key}")
+      rem_keys.append(key)
+    level_keys['2_levels'] = []
+    for key in rem_keys: 
+      if type(orig[key]) == dict: 
+        level_keys['2_levels'].append(key) 
+        # rem_keys = key_list.remove(key)
   return(level_keys) 

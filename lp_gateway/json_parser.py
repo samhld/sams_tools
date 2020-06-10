@@ -47,18 +47,6 @@ def normalize(json):
     json.loads(json)
     print(json)
 
-# function to inspect anatomy of JSON
-def inspect(json):
-  pass
-
-
-
-# function to take loaded JSON and parse into parts
-
-# 
-
-
-
 def is_json(obj: str) -> bool:
   """ 
   Checks if an object is a valid JSON string
@@ -71,58 +59,22 @@ def is_json(obj: str) -> bool:
     return False
   return True
 
-
-def print_fields_and_vals(obj):
-  if is_json(obj):
-    orig = json.loads(obj)
-    key_list = list(orig.keys())
-    for key in key_list: 
-      print(f"{key}: values: {orig[key]}") 
-  else:
-    return e
-
-def one_level_keys(obj): 
-  l1_keys = [] 
-  for key in key_list:
-    if type(orig[key]) in [int,bool,str,float]: 
-      l1_keys.append(key) 
-      key_list.remove(key) 
-  return(l1_keys)
-
-def get_level_keys(obj, lvl): 
-  level_keys = {}
-  for key in key_list:
-    if type(orig[key]) in [int,bool,str,float]: 
-      level_keys[lvl] = key
-      key_list.remove(key) 
-  return(level_keys)
-
-
-# def get_level_keys(obj, lvl):
-#   level_keys = {}     
-#   level_key_name = f"{lvl}_level" 
-#   level_keys[level_key_name] = [] 
-#   for key in key_list: 
-#     level_keys[level_key_name].append(key) 
-#     rem_keys = key_list.remove(key)  
-#   return(level_keys)
-
-def get_level_keys(obj, lvl):
-  key_list = list(obj.keys())
-  print(f"key_list: {key_list}")
-  level_keys = {}
-  level_keys['one_level'] = []
-  rem_keys = []
-
-  for key in key_list:
-    if type(orig[key]) in [int,bool,str,float]: 
-      level_keys['one_level'].append(key)
-    else:
-      print(f"adding to rem_keys: {key}")
-      rem_keys.append(key)
-    level_keys['2_levels'] = []
-    for key in rem_keys: 
-      if type(orig[key]) == dict: 
-        level_keys['2_levels'].append(key) 
-        # rem_keys = key_list.remove(key)
-  return(level_keys) 
+# Current state of this function returns a dict of the keys per level
+# Next iteration of this function should associate values with each at each level
+# ^^ that iteration could potentially be a separate function
+def get_level_keys(obj, level_count=0, level_keys={}): 
+     level_key = f"{level_count}_level" 
+    
+     if level_key not in level_keys: 
+         level_keys[level_key] = [] 
+        
+     for key, val in obj.items(): 
+         if isinstance(val, (int,float,complex,str,bool)): 
+             level_keys[level_key].append(key) 
+        
+             if key not in level_keys[level_key]: 
+                 level_keys[level_key].append(key) 
+        
+         else: 
+             level_keys.update(get_level_keys(obj[key], level_count + 1, level_keys)) 
+     return(level_keys) 

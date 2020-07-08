@@ -1,7 +1,7 @@
 import json
 import os
 import requests as re
-import cProfile
+import dateutil.parser
 
 import time
 
@@ -31,10 +31,10 @@ class Job:
     def __init__(self, appID, job: dict):
         self.appID = appID
         self.jobID = job['jobId']
-        self.name = job['name']
-        self.submissionTime = job['submissionTime']
-        self.completionTime = job['completionTime']
-        self.status = job['status']
+        self.name = job['name'].replace(" ","_").replace(":","_")
+        self.submissionTime = int(dateutil.parser.parse(job['submissionTime']).timestamp())
+        self.completionTime = int(dateutil.parser.parse(job['completionTime']).timestamp())
+        self.status = '"'+job['status']+'"'
         self.numTasks = job['numTasks']
         self.numActiveTasks = job['numActiveTasks']
         self.numSkippedTasks = job['numSkippedTasks']
@@ -49,7 +49,7 @@ for appID in get_app_ids():
 jobPoints = []
 for job in totalJobs:
     jobPoints.append(f"spark_jobs,app_id={job.appID},name={job.name} submission_time={job.submissionTime},\
-completionTime={job.completionTime},status={job.status},tasks={job.numTasks},app_id={job.appID},\
+completionTime={job.completionTime},status={job.status},tasks={job.numTasks},\
 active_tasks={job.numActiveTasks},skipped_tasks={job.numSkippedTasks},killed_tasks={job.numKilledTasks} {time.time_ns()}")
 
 

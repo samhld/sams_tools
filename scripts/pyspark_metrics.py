@@ -28,7 +28,7 @@ class App:
         pass
 
 class Job:
-    def __init__(self, appID, job: dict):
+    def __init__(self, appID: str, job: dict):
         self.appID = appID
         self.jobID = job['jobId']
         self.name = job['name'].replace(" ","_").replace(":","_")
@@ -39,8 +39,7 @@ class Job:
         self.numActiveTasks = job['numActiveTasks']
         self.numSkippedTasks = job['numSkippedTasks']
         self.numKilledTasks = job['numKilledTasks']
-
-
+        
 totalJobs = []
 for appID in get_app_ids():
     for job in get_jobs(appID):

@@ -6,7 +6,7 @@ cpu = from(bucket: "telegraf/two_weeks")
   |> filter(fn: (r) => r.host =~ /data/)
   |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> rename(columns: {usage_user: "cpu_usage_user", usage_system: "cpu_usage_system"})
-  |> group(columns: ["host"])
+  |> experimental.group(columns: ["host"], mode: "extend")
   |> drop(columns: ["_measurement","_start","_stop","cpu"])
 
 mem = from(bucket: "telegraf/two_weeks")
@@ -15,8 +15,8 @@ mem = from(bucket: "telegraf/two_weeks")
   |> filter(fn: (r) => r.host =~ /data/)
   |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> rename(columns: {used: "mem_used", available: "mem_available"})
+  |> experimental.group(columns: ["host"], mode: "extend")
   |> drop(columns: ["_measurement","_start","_stop"])
-  |> group(columns: ["host"])
 
 // pointReqs query needs to be fixed so derivative can happen prior to group
 // derivative is creating empty tables because some (randomly?) tables have only one record<-- my interpretation from Flux team

@@ -6,7 +6,7 @@ The data pulled is currently across the most recent minute (at time of query) un
 ## Data attributes included (features)
 All of the below metrics are per nod per cluster
 * cpu usage
-* mem used
+* mem used/availble
 * points written per min
 * queries executed per min
 * diskio

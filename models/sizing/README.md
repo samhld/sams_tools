@@ -9,7 +9,15 @@ All of the below metrics are per nod per cluster
 * mem used
 * points written per min
 * queries executed per min
-* 
+* diskio
+  - bytes in/out
+  - read/write counts
+* system
+  - num cores
+  - cpu load
+* http requests
+  - read/write
+
 
 Possible features to derive:
 * cpu usage normalized for cpu count

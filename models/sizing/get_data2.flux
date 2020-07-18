@@ -1,3 +1,5 @@
+import "experimental"
+
 cpu = from(bucket: "telegraf/two_weeks")
   |> range(start: -3m, stop: -1m)
   |> filter(fn: (r) => r._measurement == "cpu" and (r._field == "usage_system" or r._field == "usage_user"))
@@ -56,9 +58,9 @@ queries = from(bucket: "telegraf/two_weeks")
   |> rename(columns: {queriesExecuted: "queries_per_sec"})
   |> drop(columns: ["_measurement","url","_start","_stop"])
 
-cpu_mem = join(tables: {d1: cpu, d2: mem}, on: ["_time","cluster_id","host"])
-points_cpu_mem = join(tables: {d1: cpu_mem, d2: pointReqs}, on: ["_time","cluster_id","host"])
-sys_points_cpu_mem = join(tables: {d1: points_cpu_mem, d2: system}, on: ["_time","cluster_id","host"])
-disk_sys_points_cpu_mem = join(tables: {d1: sys_points_cpu_mem, d2: diskio}, on: ["_time","cluster_id","host"])
-queries_disk_sys_points_cpu_mem = join(tables: {d1: disk_sys_points_cpu_mem, d2: queries}, on: ["_time","cluster_id","host"])
+cpu_mem = experimental.join(left: cpu,right: mem, fn: (left, right) => ({left with mem_available: right.mem_available, mem_used: right.mem_used }))
+points_cpu_mem = experimental.join(left: cpu_mem,right: pointReqs, fn: (left, right) => ({left with point_req_per_sec: right.point_req_per_sec}))
+sys_points_cpu_mem = experimental.join(left: points_cpu_mem,right: system, fn: (left, right) => ({left with cpu_load1: right.load1, cpu_load5: right.load5, cpu_load15: right.load15, n_cpus: right.n_cpus}))
+disk_sys_points_cpu_mem = experimental.join(left: sys_points_cpu_mem, right: diskio, fn: (left, right) => ({left with read_bytes_per_10s: right.read_bytes_per_10s, reads_per_10s: right.reads_per_10s, write_bytes_per_10s: right.write_bytes_per_10s, writes_per_10s: right.writes_per_10s}))
+queries_disk_sys_points_cpu_mem = experimental.join(left: disk_sys_points_cpu_mem,right: queries, fn: (left, right) => ({left with queries_per_sec: right.queries_per_sec}))
 queries_disk_sys_points_cpu_mem

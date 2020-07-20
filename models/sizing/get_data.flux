@@ -40,7 +40,7 @@ diskio = from(bucket: "telegraf/two_weeks")
   |> filter(fn: (r) => r._measurement == "diskio" and (r._field == "reads" or r._field == "writes" or r._field == "write_bytes" or r._field == "read_bytes"))
   |> filter(fn: (r) => r.host =~ /data/ and r.host =~ /data/)
   |> difference(nonNegative: false, columns: ["_value"])
-  |> group(columns: ["_time","_value","name"], mode: "except")
+
   |> aggregateWindow(every: 10s, fn: sum)
   |> filter(fn: (r) => exists r._value)
   |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")

@@ -57,10 +57,21 @@ queries = from(bucket: "telegraf/two_weeks")
   |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> rename(columns: {queriesExecuted: "queries_per_sec"})
   |> drop(columns: ["_measurement","url","_start","_stop"])
+  
+http = from(bucket: "telegraf/two_weeks")
+  |> range(start: -3m, stop: -1m)
+  |> filter(fn: (r) => r._measurement == "influxdb_httpd" and (r._field == "queryReq" or r._field == "writeReq" or r._field == "queryRespBytes" or r._field == "writeReqBytes"))
+  |> difference(nonNegative: false, columns: ["_value"])
+  |> aggregateWindow(every: 15s, fn: sum)
+  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+  |> rename(columns: {queryReq: "query_req_per_15s", writeReq: "write_req_per_15s",
+                        queryRespBytes: "query_resp_bytes_per_15s", writeReqBytes: "write_req_bytes_per_15s"})
+  |> drop(columns: ["bind","_start","_stop","_measurement","url"])
 
 cpu_mem = experimental.join(left: cpu,right: mem, fn: (left, right) => ({left with mem_available: right.mem_available, mem_used: right.mem_used }))
 points_cpu_mem = experimental.join(left: cpu_mem,right: pointReqs, fn: (left, right) => ({left with point_req_per_sec: right.point_req_per_sec}))
 sys_points_cpu_mem = experimental.join(left: points_cpu_mem,right: system, fn: (left, right) => ({left with cpu_load1: right.load1, cpu_load5: right.load5, cpu_load15: right.load15, n_cpus: right.n_cpus}))
 disk_sys_points_cpu_mem = experimental.join(left: sys_points_cpu_mem, right: diskio, fn: (left, right) => ({left with read_bytes_per_10s: right.read_bytes_per_10s, reads_per_10s: right.reads_per_10s, write_bytes_per_10s: right.write_bytes_per_10s, writes_per_10s: right.writes_per_10s}))
 queries_disk_sys_points_cpu_mem = experimental.join(left: disk_sys_points_cpu_mem,right: queries, fn: (left, right) => ({left with queries_per_sec: right.queries_per_sec}))
-queries_disk_sys_points_cpu_mem
+http_queries_disk_sys_points_cpu_mem = experimental.join(left: queries_disk_sys_points_cpu_mem, right: http, fn: (left, right) => ({left with query_req_per_15s: right.query_req_per_15s, query_resp_bytes_per_15s: right.query_resp_bytes_per_15s, write_req_per_15s: right.write_req_per_15s, write_req_bytes_per_15s: right.write_req_bytes_per_15s}))
+http_queries_disk_sys_points_cpu_mem

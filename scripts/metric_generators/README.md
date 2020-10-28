@@ -3,6 +3,9 @@
 ## Requires:
 * Python 3.6+
 
+This tool should be used as follows:
+- 
+
 #### Not Yet Implemented:
 * variables.env
 * gen_config.py

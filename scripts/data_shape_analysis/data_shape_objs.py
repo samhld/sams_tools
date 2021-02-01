@@ -5,28 +5,32 @@ import math
 import matplotlib.pyplot as plt
 import re
 import numpy as np
-import pysnooper
+# import pysnooper
 
 
-file = 'metrics.out'
+# file = 'metrics.out'
 
-text = open(file, 'r')
-text = text.read()
+# text = open(file, 'r')
+# text = text.read()
 
 class Plotter:
     # @pysnooper.snoop()
-    def __init__(self, text, flattened=False, no_timestamps=False):
+    def __init__(self, text, flattened=True, no_timestamps=False):
         #add error handling for not being passed text (or file if I go that route)
         self.flattened = flattened # determines whether self.tags/self.fields will be a list of lists; defaults to False so it's easier to work with a line at a time.
         self.num_lines = len(text.splitlines())
-        self.measurements = []
-        self.tags = []
-        self.fields = [] # in text with multiple lines, this is a list of lists
-        self.timestamps = []
-        self._parse(text)
+        # self.measurements = []
+        # self.tags = []
+        # self.fields = [] # in text with multiple lines, this is a list of lists
+        # self.timestamps = []
+        self.measurements, self.tags, self.fields, self.timestamps = self._parse(text)
         self._tags_dict = { f"Line{i+1} tags": len(elem) for i,elem in enumerate(self.tags)}
         self._fields_dict = { f"Line{i+1} fields": len(elem) for i,elem in enumerate(self.fields)}
         self.no_timestamps = no_timestamps
+        self.pattern = re.compile(r'(.*)=(.*)')
+        self.tag_keys, self.tag_values = self._parse_primitives(self.tags)
+        self.field_keys, self.field_values = self._parse_primitives(self.fields)
+
         # if text is str:
         #     self.num_lines = sum(1 for line in text.splitlines())
         # if text is list:
@@ -37,6 +41,7 @@ class Plotter:
     # @pysnooper.snoop()
     def _parse(self,text):
     
+        measurements, tags, fields, timestamps = [], [], [], []
         if self.flattened:
             try:
                 self.bad_lines = {}
@@ -45,11 +50,11 @@ class Plotter:
                         line_tags, line_fields, timestamp = re.split('(?<!\\\\)\s', line)
                         line_tags = line_tags.split(',')
                         measurement = line_tags.pop(0)
-                        self.measurements.append(measurement)
+                        measurements.append(measurement)
                         line_fields = line_fields.split(',')
-                        self.tags.extend(line_tags)
-                        self.fields.extend(line_fields)
-                        self.timestamps.extend(timestamp)
+                        tags.extend(line_tags)
+                        fields.extend(line_fields)
+                        timestamps.extend(timestamp)
 
                     elif len(re.split('(?<!\\\\)\s', line)) == 2 and self.no_timestamps == True:
                         print(f"This line was disqualified due to formatting issues:\n{line}")
@@ -57,10 +62,10 @@ class Plotter:
                         line_tags, line_fields = re.split('(?<!\\\\)\s', line)
                         line_tags = line_tags.split(',')
                         measurement = line_tags.pop(0)
-                        self.measurements.append(measurement)
+                        measurements.append(measurement)
                         line_fields = line_fields.split(',')
-                        self.tags.extend(line_tags)
-                        self.fields.extend(line_fields)
+                        tags.extend(line_tags)
+                        fields.extend(line_fields)
                         
             except ValueError:
                 print(f"This line was disqualified due to formatting issues:\n{line}")
@@ -73,14 +78,23 @@ class Plotter:
                         line_tags, line_fields, timestamp = re.split('(?<!\\\\)\s', line)
                         line_tags = line_tags.split(',')
                         measurement = line_tags.pop(0)
-                        self.measurements.append(measurement)
+                        measurements.append(measurement)
                         line_fields = line_fields.split(',')
-                        self.tags.append(line_tags)
-                        self.fields.append(line_fields)
-                        self.timestamps.append(timestamp)
+                        tags.append(line_tags)
+                        fields.append(line_fields)
+                        timestamps.append(timestamp)
             except ValueError:
                 print(f"This line was disqualified due to formatting issues:\n{line}")
 
+        return (measurements, tags, fields, timestamps)
+
+    def _parse_primitives(self, primitives):
+        """Returns tuple of 2 lists of keys and values of either Tags or Fields"""
+        self.keys, self.values = [], []
+        for prim in primitives:
+            self.keys.append(self.pattern.match(prim).group(1))
+            self.values.append(self.pattern.match(prim).group(2))
+        return (self.keys, self.values)
 
     def total_fields(self):
         self._total_fields = sum(self._fields_dict.values())
@@ -159,11 +173,11 @@ class Plotter:
         return self._distinct_measurements
 
     def tag_variance(self):
-        self._tag_variance = variance(self._tags_dict.values())
+        self._tag_variance = variance(list(self._tags_dict.values()))
         return self._tag_variance
 
     def field_variance(self):
-        self._field_variance = variance(self._fields_dict.values())
+        self._field_variance = variance(list(self._fields_dict.values()))
         return self._field_variance
 
     def tag_stddev(self):
@@ -213,8 +227,8 @@ class Plotter:
             'Tags median': self.median_tags(),
             'Fields median': self.median_fields(),
             'Count distinct measurements': self.distinct_measurements(),
-            'Tag variance': self.tag_variance(),
-            'Field variance': self.field_variance(),
+            # 'Tag variance': self.tag_variance(),
+            # 'Field variance': self.field_variance(),
             'Tag stddev': self.tag_stddev(),
             'Field stddev': self.field_stddev()
         }

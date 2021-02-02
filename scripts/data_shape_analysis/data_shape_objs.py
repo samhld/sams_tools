@@ -215,6 +215,9 @@ class Plotter:
         plt.ylabel('Tag Counts')
         plt.title('Count of Occurrences of Tags Per Line')
         plt.show()
+    
+    def mean(self, list_of_primitives):
+        return sum(map(len, list_of_primitives)) / len(list_of_primitives)
         
 
     def describe(self, t='dict'):
@@ -227,10 +230,14 @@ class Plotter:
             'Tags median': self.median_tags(),
             'Fields median': self.median_fields(),
             'Count distinct measurements': self.distinct_measurements(),
+            'Mean Field key': self.mean(self.field_keys),
+            'Mean Field value': self.mean(self.field_values),
+            'Mean Tag key': self.mean(self.tag_keys),
+            'Mean Tag value': self.mean(self.tag_values)
             # 'Tag variance': self.tag_variance(),
             # 'Field variance': self.field_variance(),
-            'Tag stddev': self.tag_stddev(),
-            'Field stddev': self.field_stddev()
+            # 'Tag stddev': self.tag_stddev(),
+            # 'Field stddev': self.field_stddev()
         }
         if  t == 'dict':
             return description

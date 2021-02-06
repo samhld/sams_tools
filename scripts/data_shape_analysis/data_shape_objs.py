@@ -90,11 +90,24 @@ class Plotter:
 
     def _parse_primitives(self, primitives):
         """Returns tuple of 2 lists of keys and values of either Tags or Fields"""
+        pattern = re.compile(r'(.*)=(.*)')
         self.keys, self.values = [], []
         for prim in primitives:
             self.keys.append(self.pattern.match(prim).group(1))
             self.values.append(self.pattern.match(prim).group(2))
         return (self.keys, self.values)
+
+    def _infer_field_types(self, values):
+
+        fl_pattern = re.compile(r'\d+\.\d+') # distinguish floats from ints with presence of decimal
+        floats = [fl_pattern.match(val).string for val in values if fl_pattern.match(val)]
+        ints = list(filter(lambda x: x[-1]=="i", values))
+        bools = [val for val in values if val in ('True','true','False','false')]
+        # note strs doesn't work as intended yet -- returns all of `values`
+        strs = [val for val in values if val not in (floats, ints, bools)]
+
+        return floats, ints, bools, strs
+        
 
     def total_fields(self):
         self._total_fields = sum(self._fields_dict.values())

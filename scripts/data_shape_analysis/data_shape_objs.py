@@ -30,6 +30,7 @@ class Plotter:
         self.pattern = re.compile(r'(.*)=(.*)')
         self.tag_keys, self.tag_values = self._parse_primitives(self.tags)
         self.field_keys, self.field_values = self._parse_primitives(self.fields)
+        self.floats, self.ints, self.bools, self.strs = self._infer_field_types(self.field_values)
 
         # if text is str:
         #     self.num_lines = sum(1 for line in text.splitlines())
@@ -99,12 +100,17 @@ class Plotter:
 
     def _infer_field_types(self, values):
 
-        fl_pattern = re.compile(r'\d+\.\d+') # distinguish floats from ints with presence of decimal
-        floats = [fl_pattern.match(val).string for val in values if fl_pattern.match(val)]
-        ints = list(filter(lambda x: x[-1]=="i", values))
-        bools = [val for val in values if val in ('True','true','False','false')]
-        # note strs doesn't work as intended yet -- returns all of `values`
-        strs = [val for val in values if val not in (floats, ints, bools)]
+        fl_pattern = re.compile(r'\d+\.\d+') # distinguish floats from ints with presence of decimal       
+        floats, ints, strs, bools = [], [], [], []
+        for val in values:
+            if val.endswith('i'):
+                ints.append(val)
+            elif fl_pattern.match(val):
+                floats.append(fl_pattern.match(val).string)
+            elif val in ('True','true','False','false'):
+                bools.append(val)
+            else:
+                strs.append(val)
 
         return floats, ints, bools, strs
         

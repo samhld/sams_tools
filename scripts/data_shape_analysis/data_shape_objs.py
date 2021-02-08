@@ -113,7 +113,13 @@ class Plotter:
                 strs.append(val)
 
         return floats, ints, bools, strs
-        
+
+    def line_by_line_schema(self, text):
+        schema_dict = dict()
+        for i, line in enumerate(text.splitlines()):
+            field_values = self._parse_primitives(self.fields)[1]
+            schema_dict[f"Line_{i+1}_floats"], schema_dict[f"Line_{i+1}_ints"], schema_dict[f"Line_{i+1}_bools"], schema_dict[f"Line_{i+1}_strs"] = self._infer_field_types(field_values)
+        return schema_dict
 
     def total_fields(self):
         self._total_fields = sum(self._fields_dict.values())

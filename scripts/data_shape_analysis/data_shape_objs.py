@@ -30,8 +30,15 @@ class Plotter:
         self.pattern = re.compile(r'(.*)=(.*)')
         self.tag_keys, self.tag_values = self._parse_primitives(self.tags)
         self.field_keys, self.field_values = self._parse_primitives(self.fields)
-        self.floats, self.ints, self.bools, self.strs = self._infer_field_types(self.field_values)
-
+        self.float_values, self.int_values, self.bool_values, self.str_values = self._infer_field_types(self.field_values)
+        if self.int_values:
+            self.avg_int_value = self.mean(self.int_values)
+        if self.float_values:
+            self.avg_float_value = self.mean(self.float_values)
+        if self.bool_values:
+            self.avg_bool_value = self.mean(self.bool_values)
+        if self.str_values:
+            self.avg_str_value = self.mean(self.str_values)
         # if text is str:
         #     self.num_lines = sum(1 for line in text.splitlines())
         # if text is list:
@@ -185,7 +192,7 @@ class Plotter:
 
     def mode_fields(self, value='mode'):
         if value == 'mode':
-            # mode is the number of tags that occurred most often
+            # mode is the number of fields that occurred most often
             self._mode_fields = Counter(self._fields_dict.values()).most_common(1)[0][0]
             return self._mode_fields
         if value == 'occurrences':
@@ -241,10 +248,9 @@ class Plotter:
         plt.title('Count of Occurrences of Tags Per Line')
         plt.show()
     
-    def mean(self, list_of_primitives):
-        return sum(map(len, list_of_primitives)) / len(list_of_primitives)
+    def mean(self, li):
+        return sum(map(len, li)) / len(li)
         
-
     def describe(self, t='dict'):
         # 't' is return type-->can be 'dict' or 'dataframe'
         description = {

@@ -1,0 +1,3 @@
+measurements,circuit_id=0012a845-f2d9-43a5-81e9-51564ed55740
+power=1.9325,current=0.6103,voltage=1.4218,power_factor=0.341
+1592314529396000000

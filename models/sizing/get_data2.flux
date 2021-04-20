@@ -58,6 +58,7 @@ queries = from(bucket: "telegraf/two_weeks")
   |> rename(columns: {queriesExecuted: "queries_per_15s"})
   |> drop(columns: ["_measurement","url","_start","_stop"])
   
+  
 http = from(bucket: "telegraf/two_weeks")
   |> range(start: -3m, stop: -1m)
   |> filter(fn: (r) => r._measurement == "influxdb_httpd" and (r._field == "queryReq" or r._field == "writeReq" or r._field == "queryRespBytes" or r._field == "writeReqBytes"))
